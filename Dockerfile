@@ -1,5 +1,5 @@
 # Importing JDK and copying required files
-FROM openjdk:17-oracle AS build
+FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src src
@@ -13,7 +13,7 @@ RUN chmod +x ./mvnw
 RUN ./mvnw clean package -DskipTests
 
 # Stage 2: Create the final Docker image using OpenJDK 17
-FROM openjdk:17-oracle
+FROM eclipse-temurin:17-jdk-jammy
 VOLUME /tmp
 
 # Copy the JAR from the build stage
