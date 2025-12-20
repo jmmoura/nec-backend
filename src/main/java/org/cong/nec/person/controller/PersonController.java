@@ -3,9 +3,7 @@ package org.cong.nec.person.controller;
 import lombok.AllArgsConstructor;
 import org.cong.nec.person.dto.PersonDTO;
 import org.cong.nec.person.service.PersonService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +19,21 @@ public class PersonController {
     @GetMapping
     public List<PersonDTO> findAll() {
         return personService.findAll();
+    }
+
+    @PostMapping
+    public PersonDTO create(@RequestBody PersonDTO personDTO) {
+        return personService.create(personDTO);
+    }
+
+    @PutMapping("/{id}")
+    public PersonDTO update(@PathVariable Long id, @RequestBody PersonDTO personDTO) {
+        return personService.update(id, personDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        personService.delete(id);
     }
 
 }

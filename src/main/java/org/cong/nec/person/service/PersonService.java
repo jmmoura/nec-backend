@@ -26,4 +26,29 @@ public class PersonService {
                         .build())
                 .toList();
     }
+
+    public PersonDTO create(PersonDTO personDTO) {
+        Person person = Person.builder()
+                .name(personDTO.getName())
+                .build();
+        Person savedPerson = personRepository.save(person);
+        return PersonDTO.builder()
+                .id(savedPerson.getId())
+                .name(savedPerson.getName())
+                .build();
+    }
+
+    public void delete(Long id) {
+        personRepository.deleteById(id);
+    }
+
+    public PersonDTO update(Long id, PersonDTO personDTO) {
+        Person person = personRepository.findById(id).orElseThrow(() -> new RuntimeException("Person not found"));
+        person.setName(personDTO.getName());
+        Person updatedPerson = personRepository.save(person);
+        return PersonDTO.builder()
+                .id(updatedPerson.getId())
+                .name(updatedPerson.getName())
+                .build();
+    }
 }
