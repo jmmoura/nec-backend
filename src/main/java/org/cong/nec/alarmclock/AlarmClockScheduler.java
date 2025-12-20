@@ -1,5 +1,6 @@
 package org.cong.nec.alarmclock;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -10,9 +11,11 @@ import java.time.LocalDateTime;
 
 @Component
 @EnableScheduling
-public class AlarmClock {
+@AllArgsConstructor
+public class AlarmClockScheduler {
 
-        private static final Logger logger = LoggerFactory.getLogger(AlarmClock.class);
+        private AlarmClockService alarmClockService;
+        private static final Logger logger = LoggerFactory.getLogger(AlarmClockScheduler.class);
 
         /**
          * Scheduled method to log a wake-up message every 14 minutes.
@@ -22,5 +25,6 @@ public class AlarmClock {
             LocalDateTime date = LocalDateTime.now();
             logger.info("Wake up! Date and time: {}", date);
 
+            logger.info(alarmClockService.performSelfCall());
         }
 }
