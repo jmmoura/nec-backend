@@ -8,6 +8,7 @@ import org.cong.nec.territory.model.Territory;
 import org.cong.nec.assignment.repository.AssignmentRepository;
 import org.cong.nec.person.service.PersonService;
 import org.cong.nec.territory.service.TerritoryService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class AssignmentService {
 
     private PersonService personService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AssignmentSummaryDTO> findCurrentAssignments() {
         List<Assignment> assignments = assignmentRepository.findByCompletedAtNull();
         List<Territory> territories = territoryService.listTerritories();
@@ -96,6 +98,7 @@ public class AssignmentService {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public AssignmentSummaryDTO update(AssignmentSummaryDTO assignmentSummaryDTO) {
 
         Territory territory = territoryService.findByNumber(assignmentSummaryDTO.getTerritoryNumber());

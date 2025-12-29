@@ -6,6 +6,7 @@ import org.cong.nec.address.model.Address;
 import org.cong.nec.block.dto.BlockDetailsDTO;
 import org.cong.nec.block.model.Block;
 import org.cong.nec.block.repository.BlockRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -16,6 +17,7 @@ public class BlockService {
 
     private BlockRepository blockRepository;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR', 'PUBLISHER')")
     public BlockDetailsDTO findDetailsDTOById(Long id) {
         Block block = findById(id);
 

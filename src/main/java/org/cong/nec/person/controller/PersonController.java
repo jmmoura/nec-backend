@@ -3,8 +3,12 @@ package org.cong.nec.person.controller;
 import lombok.AllArgsConstructor;
 import org.cong.nec.person.dto.PersonDTO;
 import org.cong.nec.person.service.PersonService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -22,8 +26,17 @@ public class PersonController {
     }
 
     @PostMapping
-    public PersonDTO create(@RequestBody PersonDTO personDTO) {
-        return personService.create(personDTO);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<PersonDTO> create(@RequestBody PersonDTO personDTO) {
+        PersonDTO personCreated = personService.create(personDTO);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(personCreated.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(personCreated);
     }
 
     @PutMapping("/{id}")
@@ -32,6 +45,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         personService.delete(id);
     }

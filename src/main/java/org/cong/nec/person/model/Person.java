@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.cong.nec.authentication.User;
+import org.cong.nec.authentication.model.User;
 
 @Data
 @Builder

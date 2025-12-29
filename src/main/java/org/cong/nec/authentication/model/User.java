@@ -1,10 +1,11 @@
-package org.cong.nec.authentication;
+package org.cong.nec.authentication.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.cong.nec.authentication.enums.Role;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,12 +22,22 @@ import java.util.Collections;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    private String territoryNumber;
+
+    private Long loginTime;
+
     private static final String ROLE_PREFIX = "ROLE_";
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Override
@@ -36,12 +47,12 @@ public class User implements UserDetails {
 
     @Override
     public @Nullable String getPassword() {
-        return "";
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return username;
     }
 
 }

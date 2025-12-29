@@ -6,6 +6,7 @@ import org.cong.nec.address.model.Address;
 import org.cong.nec.address.repository.AddressRepository;
 import org.cong.nec.block.model.Block;
 import org.cong.nec.block.service.BlockService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +17,7 @@ public class AddressService {
 
     private BlockService blockService;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR', 'PUBLISHER')")
     public AddressDTO update(AddressDTO addressDTO) {
         Block block = blockService.findById(addressDTO.getBlockId());
 

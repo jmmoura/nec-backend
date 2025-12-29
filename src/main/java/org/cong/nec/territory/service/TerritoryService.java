@@ -8,6 +8,7 @@ import org.cong.nec.territory.dto.TerritorySummaryDTO;
 import org.cong.nec.territory.dto.TerritoryDetailsDTO;
 import org.cong.nec.territory.model.Territory;
 import org.cong.nec.territory.repository.TerritoryRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class TerritoryService {
         return territoryRepository.findByNumber(number);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TerritorySummaryDTO> findAll() {
         List<Territory> territories = territoryRepository.findAll();
         return territories.stream().map(territory -> TerritorySummaryDTO.builder()
@@ -37,6 +39,7 @@ public class TerritoryService {
                .build()).toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR', 'PUBLISHER')")
     public TerritoryDetailsDTO findById(Long id) {
         Territory territory = territoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Territory not found with id: " + id));
