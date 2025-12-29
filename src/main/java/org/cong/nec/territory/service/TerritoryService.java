@@ -11,6 +11,7 @@ import org.cong.nec.territory.repository.TerritoryRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -32,11 +33,14 @@ public class TerritoryService {
     @PreAuthorize("hasRole('ADMIN')")
     public List<TerritorySummaryDTO> findAll() {
         List<Territory> territories = territoryRepository.findAll();
-        return territories.stream().map(territory -> TerritorySummaryDTO.builder()
-                .id(territory.getId())
-               .name(territory.getName())
-               .number(territory.getNumber())
-               .build()).toList();
+        return territories.stream()
+                .sorted(Comparator.comparing(Territory::getNumber))
+                .map(territory -> TerritorySummaryDTO.builder()
+                        .id(territory.getId())
+                        .name(territory.getName())
+                        .number(territory.getNumber())
+                        .build())
+                .toList();
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR', 'PUBLISHER')")

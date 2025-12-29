@@ -24,8 +24,8 @@ public class LinkService {
         String username = "territory_" + linkRequestDTO.getTerritoryNumber() + "_" + linkRequestDTO.getRole().name().toLowerCase();
         User user = securityService.loadUserByUsername(username);
         String token;
-        Long loginTime = (new Date().getTime() / 1000) * 1000L;
         if (user.getRole() == Role.CONDUCTOR) {
+            Long loginTime = (new Date().getTime() / 1000) * 1000L;
             user.setLoginTime(loginTime);
             token = JWTUtils.generateToken(
                     user.getId(),
