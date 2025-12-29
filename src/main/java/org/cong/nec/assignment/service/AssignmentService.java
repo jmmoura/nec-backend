@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,8 +33,9 @@ public class AssignmentService {
 
         List<AssignmentSummaryDTO> assignmentSummaryDTOList = new ArrayList<>();
 
-        List<Territory> territoriesWithAssignments = territories.stream().filter( territory ->
-                assignments.stream().anyMatch(assignment ->
+        List<Territory> territoriesWithAssignments = territories.stream()
+                .sorted(Comparator.comparing(territory -> Integer.valueOf(territory.getNumber())))
+                .filter( territory -> assignments.stream().anyMatch(assignment ->
                         assignment.getTerritory().getId().equals(territory.getId())
                 )
         ).toList();
@@ -57,8 +59,9 @@ public class AssignmentService {
             assignmentSummaryDTOList.add(assignmentSummaryDTO);
         });
 
-        List<Territory> territoriesWithoutAssignments = territories.stream().filter( territory ->
-                assignments.stream().noneMatch(assignment ->
+        List<Territory> territoriesWithoutAssignments = territories.stream()
+                .sorted(Comparator.comparing(territory -> Integer.valueOf(territory.getNumber())))
+                .filter( territory -> assignments.stream().noneMatch(assignment ->
                         assignment.getTerritory().getId().equals(territory.getId())
                 )
         ).toList();
