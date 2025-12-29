@@ -13,20 +13,24 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "address")
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "street")
     private String street;
 
+    @Column(name = "number")
     private String number;
 
+    @Column(name = "visited_at")
     private LocalDateTime visitedAt;
 
+    @Column(name = "visit_unallowed_at")
     private LocalDateTime visitUnallowedAt;
 
     @ManyToOne

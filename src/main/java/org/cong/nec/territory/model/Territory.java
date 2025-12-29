@@ -14,20 +14,24 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "territory")
 public class Territory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "number")
     private String number;
 
+    @Column(name = "warning_message")
     private String warningMessage;
 
+    @Column(name = "map_image_url")
     private String mapImageUrl;
 
     @OneToMany(mappedBy = "territory", cascade = CascadeType.ALL)

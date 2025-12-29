@@ -14,19 +14,21 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "assignment")
 public class Assignment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne
     private Person assignedTo;
 
+    @Column(name = "assigned_at")
     private LocalDate assignedAt;
 
+    @Column(name = "completed_at")
     private LocalDate completedAt;
 
     @ManyToOne

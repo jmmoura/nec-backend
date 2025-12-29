@@ -155,6 +155,7 @@ public class AssignmentService {
                 .territoryName(updatedAssignment.getTerritory().getName())
                 .assignedToPersonId(updatedAssignment.getAssignedTo().getId())
                 .assignmentDate(updatedAssignment.getAssignedAt())
+                .completedDate(updatedAssignment.getCompletedAt())
                 .territoryWarningMessage(updatedAssignment.getTerritory().getWarningMessage())
                 .build();
     }

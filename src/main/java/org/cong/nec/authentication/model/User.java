@@ -23,21 +23,25 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(unique = true)
+    @Column(name = "username", unique = true)
     private String username;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name = "territory_number")
     private String territoryNumber;
 
+    @Column(name = "login_time")
     private Long loginTime;
 
     private static final String ROLE_PREFIX = "ROLE_";
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Role role;
 
     @Override
