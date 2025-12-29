@@ -34,7 +34,7 @@ public class TerritoryService {
     public List<TerritorySummaryDTO> findAll() {
         List<Territory> territories = territoryRepository.findAll();
         return territories.stream()
-                .sorted(Comparator.comparing(Territory::getNumber))
+                .sorted(Comparator.comparing(territory -> Integer.valueOf(territory.getNumber())))
                 .map(territory -> TerritorySummaryDTO.builder()
                         .id(territory.getId())
                         .name(territory.getName())
