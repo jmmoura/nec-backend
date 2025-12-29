@@ -6,6 +6,7 @@ import org.cong.nec.address.model.Address;
 import org.cong.nec.block.dto.BlockDetailsDTO;
 import org.cong.nec.block.model.Block;
 import org.cong.nec.block.repository.BlockRepository;
+import org.cong.nec.errorhandler.exception.EntityNotFoundException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,7 @@ public class BlockService {
 
     public Block findById(Long id) {
         return blockRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Block not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Block not found"));
     }
 
 }

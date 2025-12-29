@@ -8,16 +8,18 @@ import org.cong.nec.authentication.enums.Role;
 import org.cong.nec.authentication.model.User;
 import org.cong.nec.authentication.repository.UserRepository;
 import org.cong.nec.authentication.utils.JWTUtils;
+import org.cong.nec.errorhandler.exception.EntityNotFoundException;
 import org.cong.nec.linkgenerator.dto.SharedLinkDTO;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -28,6 +30,8 @@ public class SecurityService implements UserDetailsService {
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
+
+    public static final String TERRITORY_USERNAME_PATTERN = "territory_%NUMBER%_%ROLE%";
 
     @Autowired
     public SecurityService(@Lazy AuthenticationManager authenticationManager, UserRepository userRepository) {
@@ -78,11 +82,10 @@ public class SecurityService implements UserDetailsService {
     @Transactional
     public AuthenticationDTO authenticate(final SharedLinkDTO sharedLinkDTO) {
         final Claims claims = JWTUtils.parseToken(sharedLinkDTO.getAccess());
-        User user = userRepository.findById(Long.parseLong(claims.getSubject()))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = loadUserByUsername(claims.get(JWTUtils.TOKEN_CLAIM_USERNAME).toString());
 
         if (user.getRole() == Role.CONDUCTOR && user.getLoginTime() != claims.getIssuedAt().getTime()) {
-            throw new RuntimeException("Invalid token");
+            throw new CredentialsExpiredException("Invalid token");
         }
 
         return AuthenticationDTO.builder()
@@ -106,9 +109,14 @@ public class SecurityService implements UserDetailsService {
 
     @Transactional
     @Override
-    public User loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(@NonNull String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
+                .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     public User save(final User user) {

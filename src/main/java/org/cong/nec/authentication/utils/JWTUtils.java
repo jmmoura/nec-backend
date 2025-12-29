@@ -32,7 +32,7 @@ public class JWTUtils {
                 .compact();
     }
 
-    public static String generateToken(final Long userId, final String username, String territoryNumber, final Role userRole, final Long loginTime) {
+    public static String generateNonExpiringToken(final Long userId, final String username, String territoryNumber, final Role userRole, final Long loginTime) {
         Date issuedAt = new Date(loginTime);
         return Jwts.builder()
                 .subject(userId.toString())

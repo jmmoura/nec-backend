@@ -1,9 +1,10 @@
 package org.cong.nec.territory.service;
 
 import lombok.AllArgsConstructor;
+import org.cong.nec.assignment.repository.AssignmentRepository;
 import org.cong.nec.block.dto.BlockSummaryDTO;
 import org.cong.nec.assignment.model.Assignment;
-import org.cong.nec.assignment.repository.AssignmentRepository;
+import org.cong.nec.errorhandler.exception.EntityNotFoundException;
 import org.cong.nec.territory.dto.TerritorySummaryDTO;
 import org.cong.nec.territory.dto.TerritoryDetailsDTO;
 import org.cong.nec.territory.model.Territory;
@@ -20,14 +21,16 @@ public class TerritoryService {
 
     private TerritoryRepository territoryRepository;
 
-    private AssignmentRepository assignmentService;
+    private AssignmentRepository assignmentRepository;
 
     public List<Territory> listTerritories() {
         return territoryRepository.findAll();
     }
 
     public Territory findByNumber(String number) {
-        return territoryRepository.findByNumber(number);
+        return territoryRepository.findByNumber(number).orElseThrow(
+                () -> new EntityNotFoundException("Territory not found")
+        );
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -46,9 +49,9 @@ public class TerritoryService {
     @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR', 'PUBLISHER')")
     public TerritoryDetailsDTO findById(Long id) {
         Territory territory = territoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Territory not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Territory not found"));
 
-        Assignment assignment = assignmentService.findByTerritoryIdAndCompletedAtNull(id).orElse(null);
+        Assignment assignment = assignmentRepository.findByTerritoryIdAndCompletedAtNull(id).orElse(null);
 
         int territoryTotalHouses = territory.getBlocks().stream()
                 .mapToInt(block -> block.getAddresses().size())

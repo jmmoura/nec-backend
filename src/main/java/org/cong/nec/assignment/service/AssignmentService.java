@@ -3,6 +3,8 @@ package org.cong.nec.assignment.service;
 import lombok.AllArgsConstructor;
 import org.cong.nec.assignment.dto.AssignmentSummaryDTO;
 import org.cong.nec.assignment.model.Assignment;
+import org.cong.nec.authentication.enums.Role;
+import org.cong.nec.linkgenerator.service.LinkService;
 import org.cong.nec.person.model.Person;
 import org.cong.nec.territory.model.Territory;
 import org.cong.nec.assignment.repository.AssignmentRepository;
@@ -25,6 +27,8 @@ public class AssignmentService {
     private TerritoryService territoryService;
 
     private PersonService personService;
+
+    private LinkService linkService;
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<AssignmentSummaryDTO> findCurrentAssignments() {
@@ -140,6 +144,10 @@ public class AssignmentService {
         }
 
         Assignment updatedAssignment = assignmentRepository.save(assignment);
+
+        if (updatedAssignment.getCompletedAt() != null) {
+            linkService.invalidateLink(updatedAssignment.getTerritory().getNumber(), Role.CONDUCTOR);
+        }
 
         return AssignmentSummaryDTO.builder()
                 .id(updatedAssignment.getId())

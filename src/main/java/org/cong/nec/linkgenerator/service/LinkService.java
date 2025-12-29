@@ -21,13 +21,14 @@ public class LinkService {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'CONDUCTOR')")
     public SharedLinkDTO generateLink(@RequestBody final LinkRequestDTO linkRequestDTO) {
-        String username = "territory_" + linkRequestDTO.getTerritoryNumber() + "_" + linkRequestDTO.getRole().name().toLowerCase();
-        User user = securityService.loadUserByUsername(username);
+        String username = SecurityService.TERRITORY_USERNAME_PATTERN.replace("%NUMBER%", linkRequestDTO.getTerritoryNumber())
+                .replace("%ROLE%", linkRequestDTO.getRole().name().toLowerCase());
+        User user = securityService.findByUsername(username);
         String token;
         if (user.getRole() == Role.CONDUCTOR) {
             Long loginTime = (new Date().getTime() / 1000) * 1000L;
             user.setLoginTime(loginTime);
-            token = JWTUtils.generateToken(
+            token = JWTUtils.generateNonExpiringToken(
                     user.getId(),
                     user.getUsername(),
                     user.getTerritoryNumber(),
@@ -46,4 +47,12 @@ public class LinkService {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public void invalidateLink(String number, Role role) {
+        String username = SecurityService.TERRITORY_USERNAME_PATTERN.replace("%NUMBER%", number)
+                .replace("%ROLE%", role.name().toLowerCase());
+        User user = securityService.findByUsername(username);
+        user.setLoginTime(0L);
+        securityService.save(user);
+    }
 }

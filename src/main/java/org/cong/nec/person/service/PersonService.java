@@ -1,6 +1,7 @@
 package org.cong.nec.person.service;
 
 import lombok.AllArgsConstructor;
+import org.cong.nec.errorhandler.exception.EntityNotFoundException;
 import org.cong.nec.person.model.Person;
 import org.cong.nec.person.dto.PersonDTO;
 import org.cong.nec.person.repository.PersonRepository;
@@ -16,7 +17,7 @@ public class PersonService {
     private PersonRepository personRepository;
 
     public Person findById(Long id) {
-        return personRepository.findById(id).orElse(null);
+        return personRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Person not found"));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -48,7 +49,7 @@ public class PersonService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public PersonDTO update(Long id, PersonDTO personDTO) {
-        Person person = personRepository.findById(id).orElseThrow(() -> new RuntimeException("Person not found"));
+        Person person = findById(id);
         person.setName(personDTO.getName());
         Person updatedPerson = personRepository.save(person);
         return PersonDTO.builder()
