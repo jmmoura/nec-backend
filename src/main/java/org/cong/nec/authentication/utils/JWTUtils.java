@@ -32,7 +32,7 @@ public class JWTUtils {
                 .compact();
     }
 
-    public static String generateNonExpiringToken(final Long userId, final String username, String territoryNumber, final Role userRole, final Long loginTime) {
+    public static String generateLongTermExpiringToken(final Long userId, final String username, String territoryNumber, final Role userRole, final Long loginTime, final Date expiration) {
         Date issuedAt = new Date(loginTime);
         return Jwts.builder()
                 .subject(userId.toString())
@@ -41,6 +41,7 @@ public class JWTUtils {
                 .claim(TOKEN_CLAIM_TERRITORY_NUMBER, territoryNumber)
                 .issuedAt(issuedAt)
                 .notBefore(issuedAt)
+                .expiration(expiration)
                 .signWith(TOKEN_SECRET_KEY)
                 .compact();
     }

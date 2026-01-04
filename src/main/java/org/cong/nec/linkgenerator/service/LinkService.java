@@ -26,14 +26,17 @@ public class LinkService {
         User user = securityService.findByUsername(username);
         String token;
         if (user.getRole() == Role.CONDUCTOR) {
-            Long loginTime = (new Date().getTime() / 1000) * 1000L;
+            Date now = new Date();
+            Long loginTime = (now.getTime() / 1000) * 1000L;
+            Date expiration = new Date(now.getTime() + 5_184_000_000L); // 60 days
             user.setLoginTime(loginTime);
-            token = JWTUtils.generateNonExpiringToken(
+            token = JWTUtils.generateLongTermExpiringToken(
                     user.getId(),
                     user.getUsername(),
                     user.getTerritoryNumber(),
                     user.getRole(),
-                    user.getLoginTime());
+                    user.getLoginTime(),
+                    expiration);
             securityService.save(user);
         } else {
             token = JWTUtils.generateToken(
